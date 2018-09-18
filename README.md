@@ -224,8 +224,10 @@ After completing the system configuration listed above, perform the following st
 
 ## 5.2. 30 October 2011
 [1.2. Advanced Configuration](#12-advanced-configuration): added a lot of settings.
-[2.1. Movement]](#21-movement): no more keypad movement and the not for Mac OS is no longer needed.
-[2.2. Keyboard commands)](#22-keyboard-commands): updated and split in default and debug keys. Moved the Building SVN section to the bottom.
+
+[2.1. Movement](#21-movement): no more keypad movement and the not for Mac OS is no longer needed.
+
+[2.2. Keyboard commands](#22-keyboard-commands): updated and split in default and debug keys. Moved the [Building SVN](#4-building-svn) section to the bottom.
 
 ## 5.3. 5 January 2010
 [4.4. Mac OS X](#44-mac-os-x): added additional information for builds.
@@ -234,13 +236,14 @@ After completing the system configuration listed above, perform the following st
 [4.4. Mac OS X](#44-mac-os-x): replaced old build instructions.
 
 ## 5.5. 3 August 2007
-[[3.1. Console commands](#31-console-commands): added (short) list of console commands.
+[3.1. Console commands](#31-console-commands): added (short) list of console commands.
 
 ## 5.6. 19 February 2006
 [3.2. Supported games and versions](#32-supported-games-and-versions): updated status of non-English U8.
 
 ## 5.7. 22 May 2005
 [1.2. Advanced Configuration](#12-advanced-configuration): some more configurations added.
+
 [1.3. Optional MIDI settings for Linux](#13-optional-midi-settings-for-linux) added.
 
 ## 5.8. 21 May 2005
