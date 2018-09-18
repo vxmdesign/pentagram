@@ -34,13 +34,13 @@ The latest version of this document can be found at http://pentagram.sourceforge
 
 # 1. Configuration
 ## 1. Quick guide
-Pentagram needs a pentagram.ini file to point it to the game data files. The location of the file varies depending on the Operating System and in the case of Windows OS it also depends on the version of Windows.
-* On Linux, pentagram.ini has to be in the ~/.pentagram directory.
-* On Mac OS X, it has to be in the ~/Library/Application Support/Pentagram folder. Unfortunately ~/Library is hidden on OS X Lion, to open this folder click on the "Go" menu item of Finder while pressing 'Option/Alt'
-* Windows 95, 98, 98 SE and ME save the ini to the folder where you installed Pentagram to (by default C:\Program Files\Pentagram)
-* Windows 2000 and XP save pentagram.ini to APPDATA\Pentagram, which translates to C:\Documents and Settings\YourUsername\Application Data\Pentagram for an English version of Windows.
-* Windows Vista and Windows 7 also save pentagram.ini to APPDATA\Pentagram, but on these this translates to C:\Users\YourUsername\AppData\Roaming\Pentagram
-* On Windows 2000, XP, Vista and 7 you can quickly access this folder by executing shell:AppData\Pentagram in the "Run" entry of the Startmenu (or the "Run or Search" entry of the Windows Vista and 7 Startmenu)
+Pentagram needs a `pentagram.ini` file to point it to the game data files. The location of the file varies depending on the Operating System and in the case of Windows OS it also depends on the version of Windows.
+* On Linux, `pentagram.ini` has to be in the `~/.pentagram` directory.
+* On Mac OS X, it has to be in the `~/Library/Application Support/Pentagram` folder. Unfortunately `~/Library` is hidden on OS X Lion, to open this folder click on the "Go" menu item of Finder while pressing 'Option/Alt'
+* Windows 95, 98, 98 SE and ME save the ini to the folder where you installed Pentagram to (by default `C:\Program Files\Pentagram`)
+* Windows 2000 and XP save `pentagram.ini` to `APPDATA\Pentagram`, which translates to `C:\Documents and Settings\YourUsername\Application Data\Pentagram` for an English version of Windows.
+* Windows Vista and Windows 7 also save `pentagram.ini` to `APPDATA\Pentagram`, but on these this translates to `C:\Users\YourUsername\AppData\Roaming\Pentagram`
+* On Windows 2000, XP, Vista and 7 you can quickly access this folder by executing `shell:AppData\Pentagram` in the "Run" entry of the Start menu (or the "Run or Search" entry of the Windows Vista and 7 Startmenu)
 
 A sample `pentagram.ini` is included below (this is all that is needed at the moment to run Pentagram). Comments are marked with # and are above the ini-entries. You can copy/paste these settings with the comments to your ini file as Pentagram will ignore lines beginning with #.
 
