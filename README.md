@@ -3,31 +3,32 @@ last changed: 09 November 2011 (GMT)
 
 The latest version of this document can be found at http://pentagram.sourceforge.net/docs.php
 
-1. Configuration
-    1. Quick guide
-    2. Advanced Configuration
-    3. Optional MIDI settings for Linux 
-2. Movement and Keys
-    1. Movement
-    2. Keyboard commands
-3. Other stuff
-    1. Console commands
-    2. Supported games and versions
-4. Building SVN
-    1. Build dependencies
-    2. Linux/Unix
-    3. Windows
-    4. Mac OS X
-5. Changes to the Documentation
-    1. 09 November 2011
-    2. 30 October 2011
-    3. 5 January 2010
-    4. 4 September 2008
-    5. 3 August 2007
-    6. 19 February 2006
-    7. 22 May 2005
-    8. 21 May 2005
-    9. 14 October 2004
+# Contents
+1. [Configuration](#1-configuration)
+    1. [Quick guide](#1-quick-guide)
+    2. [Advanced Configuration](#12-advanced-configuration)
+    3. [Optional MIDI settings for Linux](#13-optional-midi-settings-for-linux)
+2. [Movement and Keys](#2-movement-and-keys)
+    1. [Movement](#21-movement)
+    2. [Keyboard commands](#22-keyboard-commands)
+3. [Other stuff](#3-other-stuff)
+    1. [Console commands](#31-console-commands)
+    2. [Supported games and versions](#32-supported-games-and-versions)
+4. [Building SVN](#4-building-svn)
+    1. [Build dependencies](#41-build-dependencies)
+    2. [Linux/Unix](#42-linuxunix)
+    3. [Windows](#43-windows)
+    4. [Mac OS X](#44-mac-os-x)
+5. [Changes to the Documentation](#5-changes-to-the-documentation)
+    1. [09 November 2011](#51-09-november-2011)
+    2. [30 October 2011](#52-30-october-2011)
+    3. [5 January 2010](#53-5-january-2010)
+    4. [4 September 2008](#54-september-2008)
+    5. [3 August 2007](#55-3-august-2007)
+    6. [19 February 2006](#56-19-february-2006)
+    7. [22 May 2005](#57-22-may-2005)
+    8. [21 May 2005](#58-21-may-2005)
+    9. [14 October 2004](#59-1-october-2004)
 
 ---
 
@@ -218,32 +219,32 @@ After completing the system configuration listed above, perform the following st
 ---
 
 # 5. Changes to the Documentation
-## 5.1. - 09 November 2011
-1.2. Advanced Configuration: More scalers and soundfont setting for FluidSynth and CoreAudio.
+## 5.1. 09 November 2011
+[1.2. Advanced Configuration](#12-advanced-configuration): More scalers and soundfont setting for FluidSynth and CoreAudio.
 
-## 5.2. - 30 October 2011
-1.2. Advanced Configuration: added a lot of settings.
-2.1. Movement: no more keypad movement and the not for Mac OS is no longer needed.
-2.2. Keyboard commands: updated and split in default and debug keys. Moved the Building SVN section to the bottom.
+## 5.2. 30 October 2011
+[1.2. Advanced Configuration](#12-advanced-configuration): added a lot of settings.
+[2.1. Movement]](#21-movement): no more keypad movement and the not for Mac OS is no longer needed.
+[2.2. Keyboard commands)](#22-keyboard-commands): updated and split in default and debug keys. Moved the Building SVN section to the bottom.
 
-## 5.3. - 5 January 2010
-4.4. Mac OS X: added additional information for builds.
+## 5.3. 5 January 2010
+[4.4. Mac OS X](#44-mac-os-x): added additional information for builds.
 
-## 5.4. - 4 September 2008
-4.4. Mac OS X: replaced old build instructions.
+## 5.4. 4 September 2008
+[4.4. Mac OS X](#44-mac-os-x): replaced old build instructions.
 
-## 5.5. - 3 August 2007
-3.1. Console commands: added (short) list of console commands.
+## 5.5. 3 August 2007
+[[3.1. Console commands](#31-console-commands): added (short) list of console commands.
 
-## 5.6. - 19 February 2006
-3.2. Supported games and versions: updated status of non-English U8.
+## 5.6. 19 February 2006
+[3.2. Supported games and versions](#32-supported-games-and-versions): updated status of non-English U8.
 
-## 5.7. - 22 May 2005
-1.2. Advanced Configuration some more configurations added.
-1.3. Optional MIDI settings for Linux added.
+## 5.7. 22 May 2005
+[1.2. Advanced Configuration](#12-advanced-configuration): some more configurations added.
+[1.3. Optional MIDI settings for Linux](#13-optional-midi-settings-for-linux) added.
 
-## 5.8. - 21 May 2005
+## 5.8. 21 May 2005
 cleaned up outdated sections
 
-## 5.9. - 14 October 2004
-1.2. Advanced Configuration enable font replacement.
+## 5.9. 14 October 2004
+[1.2. Advanced Configuration](#12-advanced-configuration) enable font replacement.
