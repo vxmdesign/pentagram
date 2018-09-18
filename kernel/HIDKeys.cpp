@@ -309,7 +309,7 @@ HID_Key HID_GetKeyFromName(Pentagram::istring & name)
 	return HID_LAST;
 }
 
-HID_Key HID_translateSDLKey(SDLKey key)
+HID_Key HID_translateSDLKey(SDL_Keycode key)
 {
 	switch(key)
 	{
@@ -395,16 +395,16 @@ HID_Key HID_translateSDLKey(SDLKey key)
 		case SDLK_DOWN: return HID_DOWN;
 		case SDLK_LEFT: return HID_LEFT;
 		case SDLK_RIGHT: return HID_RIGHT;
-		case SDLK_KP0: return HID_KP0;
-		case SDLK_KP1: return HID_KP1;
-		case SDLK_KP2: return HID_KP2;
-		case SDLK_KP3: return HID_KP3;
-		case SDLK_KP4: return HID_KP4;
-		case SDLK_KP5: return HID_KP5;
-		case SDLK_KP6: return HID_KP6;
-		case SDLK_KP7: return HID_KP7;
-		case SDLK_KP8: return HID_KP8;
-		case SDLK_KP9: return HID_KP9;
+		case SDLK_KP_0: return HID_KP0;
+		case SDLK_KP_1: return HID_KP1;
+		case SDLK_KP_2: return HID_KP2;
+		case SDLK_KP_3: return HID_KP3;
+		case SDLK_KP_4: return HID_KP4;
+		case SDLK_KP_5: return HID_KP5;
+		case SDLK_KP_6: return HID_KP6;
+		case SDLK_KP_7: return HID_KP7;
+		case SDLK_KP_8: return HID_KP8;
+		case SDLK_KP_9: return HID_KP9;
 		case SDLK_KP_PERIOD: return HID_KP_PERIOD;
 		case SDLK_KP_DIVIDE: return HID_KP_SLASH;
 		case SDLK_KP_MULTIPLY: return HID_KP_ASTERISK;
@@ -427,10 +427,10 @@ HID_Key HID_translateSDLKey(SDLKey key)
 		case SDLK_F13: return HID_F13;
 		case SDLK_F14: return HID_F14;
 		case SDLK_F15: return HID_F15;
-		case SDLK_PRINT: return HID_PRINT;
-		case SDLK_NUMLOCK: return HID_NUM_LOCK;
+		case SDLK_PRINTSCREEN: return HID_PRINT;
+		case SDLK_NUMLOCKCLEAR: return HID_NUM_LOCK;
 		case SDLK_CAPSLOCK: return HID_CAPS_LOCK;
-		case SDLK_SCROLLOCK: return HID_SCROLL_LOCK;
+		case SDLK_SCROLLLOCK: return HID_SCROLL_LOCK;
 		case SDLK_PAUSE: return HID_PAUSE;
 		case SDLK_ESCAPE: return HID_ESCAPE;
 		case SDLK_RSHIFT: return HID_RIGHTSHIFT;

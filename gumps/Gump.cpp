@@ -813,12 +813,25 @@ bool Gump::OnKeyUp(int key)
 	if (focus_child) handled = focus_child->OnKeyUp(key);
 	return handled;
 }
+bool Gump::OnTextInput(int unicode){
+   bool handled = false;
+   if (focus_child) handled = focus_child->OnTextInput(unicode);
+   return handled;
+}
 
-bool Gump::OnTextInput(int unicode)
-{
-	bool handled = false;
-	if (focus_child) handled = focus_child->OnTextInput(unicode);
+bool Gump::OnTextInput(const char *text){
+  int c;
+  bool handled = false;
+  if (focus_child){
+    for(c = 0; c < 32; c++){
+      if(text[c] != '\0'){
+	handled = focus_child->OnTextInput(text[c]);
+      }else{
 	return handled;
+      }
+    }
+  }
+  return handled;
 }
 
 bool Gump::mustSave(bool toplevel)

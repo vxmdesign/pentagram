@@ -662,7 +662,7 @@ void MainActor::ConCmd_useBackpack(const Console::ArgvType &argv)
 {
 	if (GUIApp::get_instance()->isAvatarInStasis())
 	{
-		pout << "Can't: avatarInStasis" << std::endl;
+		pout << "Can't use backpack: avatarInStasis" << std::endl;
 		return;
 	}
 	MainActor* av = getMainActor();
@@ -675,7 +675,7 @@ void MainActor::ConCmd_useInventory(const Console::ArgvType &argv)
 {
 	if (GUIApp::get_instance()->isAvatarInStasis())
 	{
-		pout << "Can't: avatarInStasis" << std::endl;
+		pout << "Can't use inventory: avatarInStasis" << std::endl;
 		return;
 	}
 	MainActor* av = getMainActor();
@@ -686,7 +686,7 @@ void MainActor::useInventoryItem(uint32 shapenum)
 {
 	if (GUIApp::get_instance()->isAvatarInStasis())
 	{
-		pout << "Can't: avatarInStasis" << std::endl;
+		pout << "Can't use item: avatarInStasis" << std::endl;
 		return;
 	}
 	LOOPSCRIPT(script, LS_SHAPE_EQUAL(shapenum));
@@ -723,7 +723,7 @@ void MainActor::ConCmd_toggleCombat(const Console::ArgvType &argv)
 {
 	if (GUIApp::get_instance()->isAvatarInStasis())
 	{
-		pout << "Can't: avatarInStasis" << std::endl;
+		pout << "Can't toggle combat: avatarInStasis" << std::endl;
 		return;
 	}
 	MainActor* av = getMainActor();

@@ -87,7 +87,7 @@ OutputLogger::OutputLogger(FILE *file, const std::string &filename) :
 	fdPipeWrite = -1;
 
 	// Create the thread
-	pThread = SDL_CreateThread( (int (SDLCALL*)(void*)) &OutputLogger::sThreadMain,this);
+	pThread = SDL_CreateThread( (int (SDLCALL*)(void*)) &OutputLogger::sThreadMain,"logger", this);
 }
 
 OutputLogger::~OutputLogger(void)

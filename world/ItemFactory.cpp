@@ -38,8 +38,7 @@ Item* ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
 							  uint32 extendedflags, bool objid)
 {
 	// check what class to create
-	ShapeInfo *info = GameData::get_instance()->getMainShapes()->
-		getShapeInfo(shape);
+	ShapeInfo *info = GameData::get_instance()->getMainShapes()->getShapeInfo(shape);
 	if (info == 0) return 0;
 
 	// New item, no lerping

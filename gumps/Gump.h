@@ -294,6 +294,7 @@ public:
 	// Default, returns false, unless handled by focus child
 	virtual bool		OnKeyDown(int key, int mod);
 	virtual bool		OnKeyUp(int key);
+	virtual bool		OnTextInput(const char *text);
 	virtual bool		OnTextInput(int unicode);
 
 	// This is for detecting focus changes for keyboard input. Gets called true

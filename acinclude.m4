@@ -103,7 +103,7 @@ AC_DEFUN([PENT_CHECK_SDLTTF],[
     #ifdef HAVE_SDL_TTF_H
     #include "SDL_ttf.h"
     #else
-    #include <SDL/SDL_ttf.h>
+    #include <SDL2/SDL_ttf.h>
     #endif
 
     int main()
@@ -119,7 +119,7 @@ AC_DEFUN([PENT_CHECK_SDLTTF],[
 
   if test "x$pent_sdlttfok" = xyes; then
 
-    LIBS="$LIBS -lSDL_ttf"
+    LIBS="$LIBS -lSDL2_ttf"
 
     AC_LINK_IFELSE([AC_LANG_SOURCE([[
     #include "SDL.h"
@@ -159,10 +159,10 @@ AC_DEFUN([PENT_CHECK_SDLTTF],[
       if test x$sdlttflinkok = xno; then
         pent_sdlttfok=no
       else
-        SDLTTF_LIBS="-lSDL_ttf -lfreetype"
+        SDLTTF_LIBS="-lSDL2_ttf -lfreetype"
       fi
     else  
-      SDLTTF_LIBS="-lSDL_ttf"
+      SDLTTF_LIBS="-lSDL2_ttf"
     fi
   fi
 
@@ -189,8 +189,8 @@ dnl SDL_CFLAGS and SDL_LIBS are set and AC_SUBST-ed
 dnl HAVE_SDL_H is AC_DEFINE-d
 
 AC_DEFUN([PENT_CHECK_SDL],[
-  REQ_MAJOR=1
-  REQ_MINOR=2
+  REQ_MAJOR=2
+  REQ_MINOR=0
   REQ_PATCHLEVEL=0
   REQ_VERSION=$REQ_MAJOR.$REQ_MINOR.$REQ_PATCHLEVEL
 
@@ -209,18 +209,18 @@ AC_DEFUN([PENT_CHECK_SDL],[
   if test x$sdl_exec_prefix != x ; then
      sdl_args="$sdl_args --exec-prefix=$sdl_exec_prefix"
      if test x${SDL_CONFIG+set} != xset ; then
-        SDL_CONFIG=$sdl_exec_prefix/bin/sdl-config
+        SDL_CONFIG=$sdl_exec_prefix/bin/sdl2-config
      fi
   fi
   if test x$sdl_prefix != x ; then
      sdl_args="$sdl_args --prefix=$sdl_prefix"
      if test x${SDL_CONFIG+set} != xset ; then
-        SDL_CONFIG=$sdl_prefix/bin/sdl-config
+        SDL_CONFIG=$sdl_prefix/bin/sdl2-config
      fi
   fi
 
   PATH="$prefix/bin:$prefix/usr/bin:$PATH"
-  AC_PATH_PROG(SDL_CONFIG, sdl-config, no, [$PATH])
+  AC_PATH_PROG(SDL_CONFIG, sdl2-config, no, [$PATH])
   if test "$SDL_CONFIG" = "no" ; then
     pent_sdlok=no
   else

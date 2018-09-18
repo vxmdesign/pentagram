@@ -37,7 +37,7 @@ protected:
 public:
 
 	// Create from a SDL_Surface
-	SoftRenderSurface(SDL_Surface *);
+	SoftRenderSurface(SDL_Window *);
 
 	// Create a Generic surface that matches current screen parameters
 	SoftRenderSurface(int w, int h, uint8 *buf);

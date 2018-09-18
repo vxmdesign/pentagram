@@ -252,7 +252,7 @@ private:
 	
 	// Various dependancy flags
 	bool runSDLInit;
-	
+	bool textModeActive;
 	// Timing stuff
 	sint32 lerpFactor;		//!< Interpolation factor for this frame (0-256)
 	bool inBetweenFrame;	//!< Set true if we are doing an inbetween frame

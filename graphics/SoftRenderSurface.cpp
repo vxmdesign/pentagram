@@ -45,8 +45,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 // Desc: Create a SoftRenderSurface from a SDL_Surface
 //
-template<class uintX> SoftRenderSurface<uintX>::SoftRenderSurface(SDL_Surface *s)
-	: BaseSoftRenderSurface(s)
+template<class uintX> SoftRenderSurface<uintX>::SoftRenderSurface(SDL_Window *w)
+	: BaseSoftRenderSurface(w)
 {
 }
 

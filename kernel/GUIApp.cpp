@@ -148,7 +148,7 @@ GUIApp::GUIApp(int argc, const char* const* argv)
 	  mouseOverGump(0), dragging(DRAG_NOT), dragging_offsetX(0),
 	  dragging_offsetY(0), inversion(0), timeOffset(0),
 	  has_cheated(false), cheats_enabled(false),
-	  drawRenderStats(false), ttfoverrides(false), audiomixer(0)
+	  drawRenderStats(false), ttfoverrides(false), audiomixer(0), textModeActive(false)
 {
 	application = this;
 
@@ -467,7 +467,6 @@ void GUIApp::startupGame()
 	// set window title to current game
 	std::string title = "Pentagram - ";
 	title += getGameInfo()->getGameTitle();
-	SDL_WM_SetCaption(title.c_str(), "");
 
 	// Generic Commands
 	con.AddConsoleCommand("GUIApp::saveGame", ConCmd_saveGame);
@@ -614,7 +613,6 @@ void GUIApp::shutdownGame(bool reloading)
 
 	// Save config here....
 
-	SDL_WM_SetCaption("Pentagram", "");
 
 	textmodes.clear();
 
@@ -1364,8 +1362,6 @@ void GUIApp::GraphicSysInit()
 		return;
 	}
 
-	// set window title
-	SDL_WM_SetCaption("Pentagram", "");
 
 	// setup normal mouse cursor
 	con.Print(MM_INFO, "Loading Default Mouse Cursor...\n");
@@ -1470,328 +1466,305 @@ bool GUIApp::LoadConsoleFont(std::string confontini)
 	return true;
 }
 
-void GUIApp::enterTextMode(Gump *gump)
-{
-	uint16 key;
-	for (key=0; key < HID_LAST; ++key)
-	{
-		if (down[key])
-		{
-			down[key] = 0;
-			lastDown[key] = 0;
-			hidmanager->handleEvent((HID_Key) key, HID_EVENT_RELEASE);
-		}
-	}
+void GUIApp::enterTextMode(Gump *gump){
+  uint16 key;
+  for (key=0; key < HID_LAST; ++key){
+    if (down[key]){
+      down[key] = 0;
+      lastDown[key] = 0;
+      hidmanager->handleEvent((HID_Key) key, HID_EVENT_RELEASE);
+    }
+  }
 		
-	if (!textmodes.empty()) {
-		textmodes.remove(gump->getObjId());
-	} else {
-		SDL_EnableUNICODE(1);
-		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,
-							SDL_DEFAULT_REPEAT_INTERVAL);
-	}
-	textmodes.push_front(gump->getObjId());
+  if (!textmodes.empty()) {
+    textmodes.remove(gump->getObjId());
+  } else {
+    SDL_StartTextInput();
+    textModeActive = true;
+  }
+  textmodes.push_front(gump->getObjId());
 }
 
-void GUIApp::leaveTextMode(Gump *gump)
-{
-	if (textmodes.empty()) return;
-	textmodes.remove(gump->getObjId());
-	if (textmodes.empty()) {
-		SDL_EnableUNICODE(0);
-		SDL_EnableKeyRepeat(0, 0);
-	}
+void GUIApp::leaveTextMode(Gump *gump){
+  if (textmodes.empty()) return;
+  textmodes.remove(gump->getObjId());
+  if (textmodes.empty()) {
+    SDL_StopTextInput();
+    textModeActive = false;
+  }
 }
 
-void GUIApp::handleEvent(const SDL_Event& event)
-{
-	uint32 now = SDL_GetTicks();
-	HID_Key key = HID_LAST;
-	HID_Event evn = HID_EVENT_LAST;
-	bool handled = false;
-
-	switch (event.type) {
-		case SDL_KEYDOWN:
-			key = HID_translateSDLKey(event.key.keysym.sym);
-			evn = HID_EVENT_DEPRESS;
-		break;
-		case SDL_KEYUP:
-			key = HID_translateSDLKey(event.key.keysym.sym);
-			evn = HID_EVENT_RELEASE;
-			if (dragging == DRAG_NOT)
-			{
-				switch (event.key.keysym.sym) {
-					case SDLK_q: // Quick quit
+void GUIApp::handleEvent(const SDL_Event& event){
+  uint32 now = SDL_GetTicks();
+  HID_Key key = HID_LAST;
+  HID_Event evn = HID_EVENT_LAST;
+  bool handled = false;
+  
+  switch (event.type) {
+  case SDL_KEYDOWN:
+    key = HID_translateSDLKey(event.key.keysym.sym);
+    evn = HID_EVENT_DEPRESS;
+    break;
+  case SDL_KEYUP:
+    key = HID_translateSDLKey(event.key.keysym.sym);
+    evn = HID_EVENT_RELEASE;
+    if (dragging == DRAG_NOT){
+      switch (event.key.keysym.sym) {
+      case SDLK_q: // Quick quit
 #ifndef MACOSX
-						if (event.key.keysym.mod & KMOD_CTRL)
-							ForceQuit();
+	if (event.key.keysym.mod & KMOD_CTRL)
+	  ForceQuit();
 #else
-						if (event.key.keysym.mod & KMOD_META)
-							ForceQuit();
+	if (event.key.keysym.mod & KMOD_META)
+	  ForceQuit();
 #endif
-					return;
-					default: break;
-				}
-			}
-		break;
-		case SDL_MOUSEBUTTONDOWN:
-			key = HID_translateSDLMouseButton(event.button.button);
-			evn = HID_EVENT_DEPRESS;
-		break;
-		case SDL_MOUSEBUTTONUP:
-			key = HID_translateSDLMouseButton(event.button.button);
-			evn = HID_EVENT_RELEASE;
-		break;
-		case SDL_JOYBUTTONDOWN:
-			key = HID_translateSDLJoystickButton(event.jbutton.button);
-			evn = HID_EVENT_DEPRESS;
-		break;
-		case SDL_JOYBUTTONUP:
-			key = HID_translateSDLJoystickButton(event.jbutton.button);
-			evn = HID_EVENT_RELEASE;
-		break;
-		case SDL_MOUSEMOTION:
-		{
-			int mx = event.button.x;
-			int my = event.button.y;
-			setMouseCoords(mx, my);
-		}
-		break;
-
-		case SDL_QUIT:
-			isRunning = false;
-		break;
-		case SDL_ACTIVEEVENT:
-			// pause when lost focus?
-		break;
-	}
-
-	if (dragging == DRAG_NOT && evn == HID_EVENT_DEPRESS) {
-		if (hidmanager->handleEvent(key, HID_EVENT_PREEMPT))
-			return;
-	}
-
-	// Text mode input. A few hacks here
-	if (!textmodes.empty()) {
-		Gump *gump = 0;
-
-		while (!textmodes.empty())
-		{
-			gump = p_dynamic_cast<Gump*>(objectmanager->getObject(textmodes.front()));
-			if (gump) break;
-
-			textmodes.pop_front();
-		}
-
-		if (gump) {
-			switch (event.type) {
-				case SDL_KEYDOWN:
+	return;
+      default: break;
+      }
+    }
+    break;
+  case SDL_MOUSEBUTTONDOWN:
+    key = HID_translateSDLMouseButton(event.button.button);
+    evn = HID_EVENT_DEPRESS;
+    break;
+  case SDL_MOUSEBUTTONUP:
+    key = HID_translateSDLMouseButton(event.button.button);
+    evn = HID_EVENT_RELEASE;
+    break;
+  case SDL_JOYBUTTONDOWN:
+    key = HID_translateSDLJoystickButton(event.jbutton.button);
+    evn = HID_EVENT_DEPRESS;
+    break;
+  case SDL_JOYBUTTONUP:
+    key = HID_translateSDLJoystickButton(event.jbutton.button);
+    evn = HID_EVENT_RELEASE;
+    break;
+  case SDL_MOUSEMOTION:
+    {
+      int mx = event.button.x;
+      int my = event.button.y;
+      setMouseCoords(mx, my);
+    }
+    break;
+    
+  case SDL_QUIT:
+    isRunning = false;
+    break;
+    //case SDL_ACTIVEEVENT:
+    // pause when lost focus?
+    //break;
+  }
+  
+  if (dragging == DRAG_NOT && evn == HID_EVENT_DEPRESS) {
+    if (hidmanager->handleEvent(key, HID_EVENT_PREEMPT))
+      return;
+  }
+  
+  // Text mode input. A few hacks here
+  if (textModeActive) {
+    Gump *gump = 0;    
+    while (!textmodes.empty()){
+      gump = p_dynamic_cast<Gump*>(objectmanager->getObject(textmodes.front()));
+      if (gump) break;
+      
+      textmodes.pop_front();
+    }
+    
+    if (gump) {
+      switch (event.type) {
+      case SDL_TEXTINPUT:
 #ifdef WIN32 
-					// Paste from Clip-Board on Ctrl-V - Note this should be a flag of some sort
-					if (event.key.keysym.sym == SDLK_v && event.key.keysym.mod & KMOD_CTRL)
-					{
-						if (!IsClipboardFormatAvailable(CF_TEXT)) 
-							return ; 
-						if (!OpenClipboard(NULL)) 
-							return; 
-
-						HGLOBAL hglb = GetClipboardData(CF_TEXT); 
-						if (hglb != NULL) 
-						{ 
-							LPTSTR lptstr = reinterpret_cast<LPTSTR>(GlobalLock(hglb)); 
-							if (lptstr != NULL) 
-							{ 
-								// Only read the first line of text
-								while (*lptstr >= ' ') gump->OnTextInput(*lptstr++);
-
-								GlobalUnlock(hglb); 
-							} 
-						} 
-						CloseClipboard(); 
-						return;
-					}
+	// Paste from Clip-Board on Ctrl-V - Note this should be a flag of some sort
+	if (event.key.keysym.sym == SDLK_v && event.key.keysym.mod & KMOD_CTRL){
+	  if (!IsClipboardFormatAvailable(CF_TEXT)) 
+	    return ; 
+	  if (!OpenClipboard(NULL)) 
+	    return; 
+	  
+	  HGLOBAL hglb = GetClipboardData(CF_TEXT); 
+	  if (hglb != NULL) { 
+	    LPTSTR lptstr = reinterpret_cast<LPTSTR>(GlobalLock(hglb)); 
+	    if (lptstr != NULL) { 
+	      // Only read the first line of text
+	      while (*lptstr >= ' ') gump->OnTextInput(*lptstr++);
+	      
+	      GlobalUnlock(hglb); 
+	    } 
+	  } 
+	  CloseClipboard(); 
+	  return;
+	}
 #endif
 
 #ifdef MACOSX
-					// Paste from Clip-Board on Command-V - Note this should be a flag of some sort
-					if (event.key.keysym.sym == SDLK_v && event.key.keysym.mod & KMOD_META)
-					{
-						const char * str = macosxPasteboardText();
-						if (str != NULL) 
-						{ 
-							// Only read the first line of text
-							while (*str >= ' ')
-								gump->OnTextInput(*str++);
-						} 
-						return;
-					}
+	// Paste from Clip-Board on Command-V - Note this should be a flag of some sort
+	if (event.key.keysym.sym == SDLK_v && event.key.keysym.mod & KMOD_META){
+	  const char * str = macosxPasteboardText();
+	  if (str != NULL) { 
+	    // Only read the first line of text
+	    while (*str >= ' '){
+	      gump->OnTextInput(*str++);
+	    }
+	  } 
+	  return;
+	}
 #endif
-
-					if (event.key.keysym.unicode >= ' ' &&
-						event.key.keysym.unicode <= 255 &&
-						!(event.key.keysym.unicode >= 0x7F && // control chars
-						  event.key.keysym.unicode <= 0x9F))
-					{
-						gump->OnTextInput(event.key.keysym.unicode);
-					}
-
-					gump->OnKeyDown(event.key.keysym.sym, event.key.keysym.mod);
-					return;
-
-				case SDL_KEYUP:
-					gump->OnKeyUp(event.key.keysym.sym);
-					return;
-
-				default: break;
-			}
-		}
-	}
 	
-	// Old style input begins here
-	switch (event.type) {
-
-	//!! TODO: handle mouse handedness. (swap left/right mouse buttons here)
-
-	// most of these events will probably be passed to a gump manager,
-	// since almost all (all?) user input will be handled by a gump
-
-	case SDL_MOUSEBUTTONDOWN:
-	{
-		int button = event.button.button;
-		int mx = event.button.x;
-		int my = event.button.y;
-
-		if (button >= MOUSE_LAST)
-			break;
-
-		Gump *mousedowngump = desktopGump->OnMouseDown(button, mx, my);
-		if (mousedowngump)
-		{
-			mouseButton[button].downGump = mousedowngump->getObjId();
-			handled = true;
-		}
-		else
-			mouseButton[button].downGump = 0;
-
-		mouseButton[button].curDown = now;
-		mouseButton[button].downX = mx;
-		mouseButton[button].downY = my;
-		mouseButton[button].state |= MBS_DOWN;
-		mouseButton[button].state &= ~MBS_HANDLED;
-
-		if (now - mouseButton[button].lastDown < DOUBLE_CLICK_TIMEOUT) {
-			if (dragging == DRAG_NOT) {
-				Gump* gump = getGump(mouseButton[button].downGump);
-				if (gump)
-				{
-					int mx2 = mx, my2 = my;
-					Gump *parent = gump->GetParent();
-					if (parent) parent->ScreenSpaceToGump(mx2,my2);
-					gump->OnMouseDouble(button, mx2, my2);
-				}
-				mouseButton[button].state |= MBS_HANDLED;
-				mouseButton[button].lastDown = 0;
-			}
-		}
-		mouseButton[button].lastDown = now;
-	}
+	//if (event.key.keysym.unicode >= ' ' &&
+	//    event.key.keysym.unicode <= 255 &&
+	//    !(event.key.keysym.unicode >= 0x7F && // control chars
+	//      event.key.keysym.unicode <= 0x9F)){
+	//  gump->OnTextInput(event.key.keysym.unicode);
+	//	}
+	gump->OnTextInput(event.text.text);
+	return;
+      case SDL_KEYDOWN:
+	gump->OnKeyDown(event.key.keysym.sym, event.key.keysym.mod);
+	return;
+	
+      case SDL_KEYUP:
+	gump->OnKeyUp(event.key.keysym.sym);
+	return;
+	
+      default: break;
+      }
+    }
+  }
+  
+  // Old style input begins here
+  switch (event.type) {
+    
+    //!! TODO: handle mouse handedness. (swap left/right mouse buttons here)
+    
+    // most of these events will probably be passed to a gump manager,
+    // since almost all (all?) user input will be handled by a gump
+    
+  case SDL_MOUSEBUTTONDOWN:
+    {
+      int button = event.button.button;
+      int mx = event.button.x;
+      int my = event.button.y;
+      
+      if (button >= MOUSE_LAST)
 	break;
-
-	case SDL_MOUSEBUTTONUP:
-	{
-		int button = event.button.button;
-		int mx = event.button.x;
-		int my = event.button.y;
-
-		if (button >= MOUSE_LAST)
-			break;
-
-		mouseButton[button].state &= ~MBS_DOWN;
-
-		// Need to store the last down position of the mouse
-		// when the button is released.
-		mouseButton[button].downX = mx;
-		mouseButton[button].downY = my;
-
-		// Always send mouse up to the gump
-		Gump* gump = getGump(mouseButton[button].downGump);
-		if (gump)
-		{
-			int mx2 = mx, my2 = my;
-			Gump *parent = gump->GetParent();
-			if (parent)
-				parent->ScreenSpaceToGump(mx2,my2);
-			gump->OnMouseUp(button, mx2, my2);
-			handled = true;
-		}
-
-		if (button == BUTTON_LEFT && dragging != DRAG_NOT) {
-			stopDragging(mx, my);
-			handled = true;
-			break;
-		}
+      
+      Gump *mousedowngump = desktopGump->OnMouseDown(button, mx, my);
+      if (mousedowngump){
+	mouseButton[button].downGump = mousedowngump->getObjId();
+	handled = true;
+      }else{
+	mouseButton[button].downGump = 0;
+      }
+      mouseButton[button].curDown = now;
+      mouseButton[button].downX = mx;
+      mouseButton[button].downY = my;
+      mouseButton[button].state |= MBS_DOWN;
+      mouseButton[button].state &= ~MBS_HANDLED;
+      
+      if (now - mouseButton[button].lastDown < DOUBLE_CLICK_TIMEOUT) {
+	if (dragging == DRAG_NOT) {
+	  Gump* gump = getGump(mouseButton[button].downGump);
+	  if (gump){
+	    int mx2 = mx, my2 = my;
+	    Gump *parent = gump->GetParent();
+	    if (parent) parent->ScreenSpaceToGump(mx2,my2);
+	    gump->OnMouseDouble(button, mx2, my2);
+	  }
+	  mouseButton[button].state |= MBS_HANDLED;
+	  mouseButton[button].lastDown = 0;
 	}
+      }
+      mouseButton[button].lastDown = now;
+    }
+    break;
+    
+  case SDL_MOUSEBUTTONUP:
+    {
+      int button = event.button.button;
+      int mx = event.button.x;
+      int my = event.button.y;
+      
+      if (button >= MOUSE_LAST)
 	break;
+      
+      mouseButton[button].state &= ~MBS_DOWN;
 
-	case SDL_KEYDOWN:
-	{
-		if (dragging != DRAG_NOT) break;
-
-		/*
-		switch (event.key.keysym.sym) {
-			case SDLK_KP_PLUS: {
-				midi_volume+=8;
-				if (midi_volume>255) midi_volume =255;
-				pout << "Midi Volume is now: " << midi_volume << std::endl; 
-				if (midi_driver) midi_driver->setGlobalVolume(midi_volume);
-			} break;
-			case SDLK_KP_MINUS: {
-				midi_volume-=8;
-				if (midi_volume<0) midi_volume = 0;
-				pout << "Midi Volume is now: " << midi_volume << std::endl; 
-				if (midi_driver) midi_driver->setGlobalVolume(midi_volume);
-			} break;
-			default:
-				break;
-		}
-		*/
+      // Need to store the last down position of the mouse
+      // when the button is released.
+      mouseButton[button].downX = mx;
+      mouseButton[button].downY = my;
+      
+      // Always send mouse up to the gump
+      Gump* gump = getGump(mouseButton[button].downGump);
+      if (gump){
+	int mx2 = mx, my2 = my;
+	Gump *parent = gump->GetParent();
+	if (parent){
+	  parent->ScreenSpaceToGump(mx2,my2);
 	}
+	gump->OnMouseUp(button, mx2, my2);
+	handled = true;
+      }
+
+      if (button == BUTTON_LEFT && dragging != DRAG_NOT) {
+	stopDragging(mx, my);
+	handled = true;
 	break;
-
-	// any more useful events?
-
+      }
+    }
+    break;
+    
+  case SDL_KEYDOWN:
+    {
+      if (dragging != DRAG_NOT) break;
+      
+      /*
+	switch (event.key.keysym.sym) {
+	case SDLK_KP_PLUS: {
+	midi_volume+=8;
+	if (midi_volume>255) midi_volume =255;
+	pout << "Midi Volume is now: " << midi_volume << std::endl; 
+	if (midi_driver) midi_driver->setGlobalVolume(midi_volume);
+	} break;
+	case SDLK_KP_MINUS: {
+	midi_volume-=8;
+	if (midi_volume<0) midi_volume = 0;
+	pout << "Midi Volume is now: " << midi_volume << std::endl; 
+	if (midi_driver) midi_driver->setGlobalVolume(midi_volume);
+	} break;
 	default:
-		break;
+	break;
 	}
+      */
+    }
+    break;
 
-	if (dragging == DRAG_NOT && ! handled) {
-		if (hidmanager->handleEvent(key, evn))
-			handled = true;
-		if (evn == HID_EVENT_DEPRESS)
-		{
-			down[key] = 1;
-			if (now - lastDown[key] < DOUBLE_CLICK_TIMEOUT &&
-				lastDown[key] != 0)
-			{
-				if (hidmanager->handleEvent(key, HID_EVENT_DOUBLE))
-					handled = true;
-				lastDown[key] = 0;
-			}
-			else
-			{
-				lastDown[key] = now;
-			}
-		}
-		else if (evn == HID_EVENT_RELEASE)
-		{
-			down[key] = 0;
-			if (now - lastDown[key] > DOUBLE_CLICK_TIMEOUT &&
-				lastDown[key] != 0)
-			{
-				lastDown[key] = 0;
-			}
-		}
-	}
+    // any more useful events?
+    
+  default:
+    break;
+  }
+  
+  if (dragging == DRAG_NOT && ! handled) {
+    if (hidmanager->handleEvent(key, evn)){
+      handled = true;
+    }
+    if (evn == HID_EVENT_DEPRESS){
+      down[key] = 1;
+      if (now - lastDown[key] < DOUBLE_CLICK_TIMEOUT && lastDown[key] != 0){
+	if (hidmanager->handleEvent(key, HID_EVENT_DOUBLE))
+	  handled = true;
+	lastDown[key] = 0;
+      }else{
+	lastDown[key] = now;
+      }
+    }else if (evn == HID_EVENT_RELEASE){
+      down[key] = 0;
+      if (now - lastDown[key] > DOUBLE_CLICK_TIMEOUT && lastDown[key] != 0){
+	lastDown[key] = 0;
+      }
+    }
+  }
 }
 
 void GUIApp::handleDelayedEvents()

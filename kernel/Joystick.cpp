@@ -24,28 +24,23 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #include "GUIApp.h"
 
 static SDL_Joystick * joy[JOY_LAST] = {0};
+static SDL_GameController * jctrl[JOY_LAST] = {0};
+void InitJoystick(){
+  int i, buttons, axes, balls, hats;
+  int joys = SDL_NumJoysticks();
 
-void InitJoystick()
-{
-	int i, buttons, axes, balls, hats;
-	int joys = SDL_NumJoysticks();
-
-	for (i = 0; i < joys; ++i)
-	{
-		if (i >= JOY_LAST)
-		{
-			perr << "Additional joysticks detected. Cannot initialize more than "
-				<< JOY_LAST << "." << std::endl;
-			break;
-		}
-
-		joy[i] = 0;
-
-		if(! SDL_JoystickOpened(i))
-		{
-			joy[i] = SDL_JoystickOpen(i);
-			if (joy[i])
-			{
+  for (i = 0; i < joys; ++i){
+    if (i >= JOY_LAST){
+      perr << "Additional joysticks detected. Cannot initialize more than "<< JOY_LAST << "." << std::endl;
+      break;
+    }
+    
+    joy[i] = 0;
+    
+    if(SDL_IsGameController(i)){
+      jctrl[i] = SDL_GameControllerOpen(i);
+      joy[i] = SDL_GameControllerGetJoystick(jctrl[i]);
+      if (joy[i]){
 				buttons = SDL_JoystickNumButtons(joy[i]);
 				axes = SDL_JoystickNumAxes(joy[i]);
 				balls = SDL_JoystickNumBalls(joy[i]);
@@ -66,17 +61,14 @@ void InitJoystick()
 	}
 }
 
-void ShutdownJoystick()
-{
-	int i;
-	for (i = 0; i < JOY_LAST; ++i)
-	{
-		if(joy[i] && SDL_JoystickOpened(i))
-		{
-			SDL_JoystickClose(joy[i]);
-		}
-		joy[i] = 0;
-	}
+void ShutdownJoystick(){
+  int i;
+  for (i = 0; i < JOY_LAST; ++i){
+    if(jctrl[i] != NULL){
+      SDL_GameControllerClose(jctrl[i]);
+      joy[i] = 0;
+    }
+  }
 }
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(JoystickCursorProcess,Process);

@@ -71,15 +71,6 @@ RenderSurface *RenderSurface::SetVideoMode(uint32 width,		// Width of desired mo
 	// SDL Flags to set
 	uint32 flags = 0;
 
-	// Get Current Video Mode details
-	const SDL_VideoInfo *vinfo = SDL_GetVideoInfo();
-
-	if (!vinfo)
-	{
-		pout << "SDL_GetVideoInfo() failed: " << SDL_GetError() << std::endl;
-		return 0;
-	}
-
 	// Specific Windowed code
 	if (!fullscreen) 
 	{
@@ -98,18 +89,15 @@ RenderSurface *RenderSurface::SetVideoMode(uint32 width,		// Width of desired mo
 	else
 	{
 		// Enable Fullscreen
-		flags |= SDL_FULLSCREEN;
+		flags |= SDL_WINDOW_FULLSCREEN;
 	}
 
 	// Double buffered (sdl will emulate if we don't have)
 	// Um, no, it's been decided that this is a very bad idea
 	// Transparency is very very slow with hardware
-	//flags |= SDL_HWSURFACE|SDL_DOUBLEBUF;
-	flags |= SDL_SWSURFACE;
 
-	SDL_Surface *sdl_surf = SDL_SetVideoMode(width, height, bpp, flags);
-	
-	if (!sdl_surf)
+	SDL_Window *sdl_win = SDL_CreateWindow("Pentagram", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+	if(!sdl_win)
 	{
 		// TODO: Set Error Code
 		return 0;
@@ -123,8 +111,8 @@ RenderSurface *RenderSurface::SetVideoMode(uint32 width,		// Width of desired mo
 	if (bpp == 32) surf = new D3D9SoftRenderSurface<uint32>(width,height,fullscreen);
 	else surf = new D3D9SoftRenderSurface<uint16>(width,height,fullscreen);
 #else
-	if (bpp == 32) surf = new SoftRenderSurface<uint32>(sdl_surf);
-	else surf = new SoftRenderSurface<uint16>(sdl_surf);
+	if (bpp == 32) surf = new SoftRenderSurface<uint32>(sdl_win);
+	else surf = new SoftRenderSurface<uint16>(sdl_win);
 #endif
 
 	// Initialize gamma correction tables

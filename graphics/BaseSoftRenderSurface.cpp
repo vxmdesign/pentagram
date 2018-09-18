@@ -38,13 +38,14 @@ using Pentagram::Rect;
 //
 // Desc: Constructor for BaseSoftRenderSurface from a SDL_Surface
 //
-BaseSoftRenderSurface::BaseSoftRenderSurface(SDL_Surface *s) :
+BaseSoftRenderSurface::BaseSoftRenderSurface(SDL_Window *w) :
 	pixels(0), pixels00(0), zbuffer(0), zbuffer00(0),
 	bytes_per_pixel(0), bits_per_pixel(0), format_type(0), 
 	ox(0), oy(0), width(0), height(0), pitch(0), zpitch(0),
 	flipped(false), clip_window(0,0,0,0), lock_count(0),
-	sdl_surf(s), rtt_tex(0)
+	sdl_win(w), rtt_tex(0)
 {
+  sdl_surf = SDL_GetWindowSurface(sdl_win);
 	clip_window.ResizeAbs(width = sdl_surf->w, height = sdl_surf->h);
 	pitch = sdl_surf->pitch;
 	bits_per_pixel = sdl_surf->format->BitsPerPixel;
@@ -333,7 +334,7 @@ ECode BaseSoftRenderSurface::EndPainting()
 			pixels=pixels00=0;
 
 			// Present
-			SDL_Flip (sdl_surf);
+			SDL_UpdateWindowSurface(sdl_win);
 		}
 		else {
 			ECode ret = GenericUnlock();

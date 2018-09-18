@@ -61,12 +61,13 @@ protected:
 
 	// SDL_Surface
 	SDL_Surface		*sdl_surf;
-
+	SDL_Window              *sdl_win;
+	
 	// Renderint to a texture
 	Texture			*rtt_tex;
 
 	// Create from a SDL_Surface
-	BaseSoftRenderSurface(SDL_Surface *);
+	BaseSoftRenderSurface(SDL_Window *);
 
 	// Create with Texture
 	BaseSoftRenderSurface(int w, int h);

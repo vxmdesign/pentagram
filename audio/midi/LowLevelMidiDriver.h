@@ -183,6 +183,7 @@ private:
 
 	// Thread Based Only Data
 	SDL_Thread				*thread;
+	bool                                    threadRunning;
 
 	// Timbre Banks
 	struct MT32Timbre {

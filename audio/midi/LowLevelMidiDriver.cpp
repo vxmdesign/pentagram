@@ -140,18 +140,22 @@ using std::endl;
 
 LowLevelMidiDriver::LowLevelMidiDriver() :
 	MidiDriver(), mutex(0), cbmutex(0),cond(0), 
-	global_volume(255), thread(0)
+	global_volume(255), thread(0), threadRunning(false)
 {
 }
 
 LowLevelMidiDriver::~LowLevelMidiDriver()
 {
 	// Just kill it
+  int rc;
 	if (initialized) 
 	{
 		perr <<	"Warning: Destructing LowLevelMidiDriver and destroyMidiDriver() wasn't called!" << std::endl;
 		//destroyMidiDriver();
-		if (thread) SDL_KillThread(thread);
+		if (thread){
+		  threadRunning = false;
+		  SDL_WaitThread(thread, &rc);
+		}
 	}
 	thread = 0;
 }
@@ -426,8 +430,8 @@ int LowLevelMidiDriver::initThreadedSynth()
 	
 	ComMessage message(LLMD_MSG_THREAD_INIT);
 	sendComMessage(message);
-
-	thread = SDL_CreateThread (threadMain_Static, static_cast<void*>(this));
+	threadRunning = true;
+	thread = SDL_CreateThread (threadMain_Static, "AudioLLMD", static_cast<void*>(this));
 
 	while (peekComMessageType() == LLMD_MSG_THREAD_INIT) 
 		yield ();
@@ -454,7 +458,7 @@ void LowLevelMidiDriver::destroyThreadedSynth()
 	sendComMessage(message);
 
 	int count = 0;
-	
+	int rc;
 	while (count < 400)
 	{
 		giveinfo();
@@ -472,7 +476,8 @@ void LowLevelMidiDriver::destroyThreadedSynth()
 	// We waited a while and it still didn't terminate
 	if (count == 400 && peekComMessageType() != 0) {
 		perr << "MidiPlayer Thread failed to stop in time. Killing it." << std::endl;
-		SDL_KillThread (thread);
+		threadRunning = false;
+		SDL_WaitThread(thread, &rc);
 	}
 
 	lockComMessage();
@@ -521,7 +526,7 @@ int LowLevelMidiDriver::threadMain()
 	increaseThreadPriority();
 
 	// Execute the play loop
-	for (;;)
+	while(threadRunning == true)
 	{
 		xmidi_clock = SDL_GetTicks()*6;
 		if (playSequences()) break;

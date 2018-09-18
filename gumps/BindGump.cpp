@@ -69,7 +69,7 @@ bool BindGump::OnKeyDown(int key, int mod)
 			hidmanager->unbind(*binding);
 		}
 		else {
-			Pentagram::istring control = SDL_GetKeyName(static_cast<SDLKey>(key));
+			Pentagram::istring control = SDL_GetKeyName(static_cast<SDL_Keycode>(key));
 //			hidmanager->bind(control, *binding);
 		}
 		if (invoker)
